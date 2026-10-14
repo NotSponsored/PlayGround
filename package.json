@@ -1,0 +1,19 @@
+{
+  "name": "heartbound-dusk-reborn",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Heartbound: Dusk Reborn - KH2-inspiriertes 3D Action-RPG mit P2P Multiplayer (eigene Original-Assets)",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "three": "^0.170.0",
+    "peerjs": "^1.5.4"
+  },
+  "devDependencies": {
+    "vite": "^6.0.0"
+  }
+}

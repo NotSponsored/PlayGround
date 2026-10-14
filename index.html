@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Heartbound: Dusk Reborn — 3D Action-RPG + Multiplayer</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='14' fill='%232a3160'/%3E%3Cpath d='M16 4v24M8 10l16 12M24 10L8 22' stroke='%23ffd76a' stroke-width='2.5'/%3E%3C/svg%3E"/>
+<meta name="description" content="Eigenständiges, von KH2 inspiriertes 3D Action-RPG mit Online-Koop (P2P). Alle Assets prozedural, keine Original-Assets."/>
+<link rel="stylesheet" href="./src/style.css"/>
+</head>
+<body>
+<canvas id="game-canvas"></canvas>
+
+<!-- Title screen -->
+<div id="title-screen" class="overlay">
+  <div class="title-inner">
+    <div class="title-kicker">Ein fan-inspiriertes Original — keine Kingdom-Hearts-Assets</div>
+    <h1>HEARTBOUND<br/><span>Dusk Reborn</span></h1>
+    <p class="subtitle">3D Action-RPG im Stil von KH2 · 1–3 Spieler Koop · Desktop (Tastatur + Gamepad)</p>
+    <div class="char-select">
+      <div class="char-card selected" data-char="sol"><div class="char-swatch c-sol"></div><b>Sol</b><i>Ausgeglichen · Sonnen-Schlüssel</i></div>
+      <div class="char-card" data-char="luna"><div class="char-swatch c-luna"></div><b>Luna</b><i>Schnell · Mond-Schlüssel</i></div>
+      <div class="char-card" data-char="ignis"><div class="char-swatch c-ignis"></div><b>Ignis</b><i>Stark · Stern-Schlüssel</i></div>
+    </div>
+    <div class="title-buttons">
+      <button id="btn-solo" class="btn primary">⚔ Solo-Abenteuer</button>
+      <button id="btn-host" class="btn">🌐 Koop hosten</button>
+      <button id="btn-join-show" class="btn">🔗 Koop beitreten</button>
+    </div>
+    <div id="join-box" class="join-box hidden">
+      <input id="join-code" placeholder="Host-Code eingeben (z. B. HB-XXXXXX)" maxlength="16"/>
+      <button id="btn-join" class="btn small primary">Verbinden</button>
+    </div>
+    <div id="host-code-box" class="host-code hidden">Host-Code: <b id="host-code">…</b> <button id="btn-copy" class="btn small">Kopieren</button></div>
+    <div id="mp-status" class="mp-status"></div>
+    <div class="title-foot">
+      <button id="btn-help" class="btn small ghost">Steuerung & Hilfe</button>
+      <span>WASD + Maus · J / Linksklick = Angriff · K = Magie · Space = Sprung · Shift = Ausweichen</span>
+    </div>
+  </div>
+</div>
+
+<!-- HUD -->
+<div id="hud" class="hidden">
+  <div id="party-frames"></div>
+  <div id="command-menu">
+    <div class="cmd-title">COMMAND</div>
+    <div id="cmd-list"></div>
+    <div id="magic-list" class="hidden"></div>
+  </div>
+  <div id="topbar">
+    <div id="objective">Welle <b id="wave-num">1</b> · Besiege die Schatten! <span id="enemy-count"></span></div>
+    <div id="mp-badge" class="hidden">🌐 <span id="mp-role">Solo</span> · <span id="mp-peers">1</span> Spieler</div>
+  </div>
+  <div id="boss-bar" class="hidden"><span id="boss-name">SCHATTENLORD</span><div class="boss-track"><div id="boss-fill"></div></div></div>
+  <div id="drive-bar-wrap"><span>DRIVE</span><div class="drive-track"><div id="drive-fill"></div></div><span id="drive-hint">T = Drive-Form</span></div>
+  <div id="crosshair"></div>
+  <div id="toast-wrap"></div>
+  <div id="chat-box"><div id="chat-log"></div><input id="chat-input" placeholder="Enter: Chat (Multiplayer)"/></div>
+</div>
+
+<!-- Pause / Help -->
+<div id="pause-menu" class="overlay hidden">
+  <div class="panel">
+    <h2>Pause</h2>
+    <p id="pause-info"></p>
+    <div class="row">
+      <button id="btn-resume" class="btn primary">Weiter</button>
+      <button id="btn-mute" class="btn">🔊 Ton an/aus</button>
+      <button id="btn-quit" class="btn ghost">Zum Titel</button>
+    </div>
+    <h3>Steuerung (Desktop)</h3>
+    <ul class="help-list">
+      <li><b>WASD</b> Laufen · <b>Maus</b> Kamera · <b>Space</b> Sprung · <b>Shift</b> Ausweichrolle</li>
+      <li><b>J / Linksklick</b> Angriff (3er-Kombo) · <b>K / Rechtsklick / F</b> Magie wirken</li>
+      <li><b>1–4</b> Magie wählen (Feuer, Eis, Blitz, Vita) · <b>Q</b> Blocken · <b>Tab / MMB</b> Lock-On</li>
+      <li><b>T</b> Drive-Form (wenn Leiste voll) · <b>E</b> Interagieren/Heilen · <b>Esc/P</b> Pause · <b>Enter</b> Chat</li>
+      <li><b>Gamepad:</b> Stick laufen, A springen, X Angriff, Y Magie, B ausweichen, RB blocken, LB lock-on</li>
+    </ul>
+    <h3>Multiplayer</h3>
+    <p class="muted">Hosten erzeugt einen Code. Freunde geben ihn unter „Koop beitreten" ein (P2P via PeerJS-Cloud, ohne Server von uns). Der Host simuliert Gegner autoritativ; Positionen werden ~20×/s synchronisiert. Bis zu 3 Keybearer + KI-Partner.</p>
+  </div>
+</div>
+
+<div id="gameover" class="overlay hidden">
+  <div class="panel center">
+    <h2 id="gameover-title">Besiegt…</h2>
+    <p id="gameover-sub"></p>
+    <div class="row"><button id="btn-retry" class="btn primary">Erneut versuchen</button><button id="btn-title2" class="btn ghost">Zum Titel</button></div>
+  </div>
+</div>
+
+<div id="loading" class="overlay"><div class="panel center"><h2>⏳ Lädt Dusk Plaza…</h2><p class="muted">Welt, Kämpfer & Schatten werden erzeugt.</p></div></div>
+
+<script type="module" src="./src/main.js"></script>
+</body>
+</html>
