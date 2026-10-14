@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NEON PURSUIT — Underground Heat | 3D Arcade Racer</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' fill='%2305070f'/><text x='16' y='23' font-size='20' text-anchor='middle' fill='%2300e5ff'>N</text></svg>">
+<link rel="stylesheet" href="style.css">
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+  }
+}
+</script>
+</head>
+<body>
+<div id="app">
+  <canvas id="game-canvas"></canvas>
+
+  <!-- Ladebildschirm -->
+  <div id="loader" class="overlay">
+    <div class="loader-box">
+      <div class="loader-logo">NEON<span>PURSUIT</span></div>
+      <div class="loader-sub">UNDERGROUND HEAT &bull; 3D ARCADE RACER</div>
+      <div class="loader-bar"><div id="loader-fill"></div></div>
+      <div id="loader-text">Lade 3D-Welt …</div>
+    </div>
+  </div>
+
+  <!-- Hauptmenü -->
+  <div id="menu" class="overlay hidden">
+    <div class="menu-bg-glow"></div>
+    <div class="menu-inner">
+      <div class="logo">NEON<span>PURSUIT</span></div>
+      <div class="tagline">UNDERGROUND HEAT — U2 &times; MOST WANTED &times; CARBON</div>
+      <div class="menu-grid">
+        <div class="menu-left">
+          <h2>RENNMODUS</h2>
+          <button class="mode-card active" data-mode="sprint">
+            <b>NEON SPRINT</b><em>Underground 2 Style — 3 Runden Nachtrennen, 3 Gegner, Nitro pur</em>
+            <i data-track>City Loop &bull; Nacht &bull; 3 Runden</i>
+          </button>
+          <button class="mode-card" data-mode="pursuit">
+            <b>POLIZEI-JAGD</b><em>Most Wanted Style — Entkomme der Polizei, Heat-Stufe 1–5</em>
+            <i>Highway Ring &bull; Verfolgung &bull; Überlebe 3:00 Min</i>
+          </button>
+          <button class="mode-card" data-mode="canyon">
+            <b>CANYON-DUELL</b><em>Carbon Style — 1 gegen 1 im Canyon, schmal &amp; gefährlich</em>
+            <i>Red Rock Canyon &bull; 2 Runden &bull; Drift-Bonus</i>
+          </button>
+          <div class="row">
+            <div>
+              <label>STRECKE</label>
+              <select id="sel-track">
+                <option value="city">City Loop (Neon)</option>
+                <option value="highway">Highway Ring (Polizei)</option>
+                <option value="canyon">Red Rock Canyon</option>
+              </select>
+            </div>
+            <div>
+              <label>RUNDEN</label>
+              <select id="sel-laps">
+                <option value="1">1 Runde</option>
+                <option value="2">2 Runden</option>
+                <option value="3" selected>3 Runden</option>
+                <option value="5">5 Runden</option>
+              </select>
+            </div>
+            <div>
+              <label>GEGNER</label>
+              <select id="sel-ai">
+                <option value="0">0 (Zeitfahren)</option>
+                <option value="1">1</option>
+                <option value="3" selected>3</option>
+                <option value="5">5</option>
+              </select>
+            </div>
+          </div>
+          <button id="btn-start">▶ &nbsp;RENNEN STARTEN</button>
+          <button id="btn-howto" class="ghost">STEUERUNG &amp; HILFE</button>
+        </div>
+        <div class="menu-right">
+          <h2>GARAGE — DEIN WAGEN</h2>
+          <div id="car-cards"></div>
+          <h2>TUNING &amp; STYLE</h2>
+          <div class="tune-grid">
+            <div><label>Lackierung</label><div id="paint-sw" class="swatches"></div></div>
+            <div><label>Neon-Unterboden</label><div id="neon-sw" class="swatches"></div></div>
+            <div><label>Vinyl</label><select id="sel-vinyl"><option value="none">Kein Vinyl</option><option value="stripe" selected>Rally-Streifen</option><option value="flame">Flammen</option><option value="carbon">Carbon-Seite</option></select></div>
+            <div><label>Spoiler</label><select id="sel-spoiler"><option value="none">Ohne</option><option value="sport" selected>Sport</option><option value="gt">GT-Flügel</option></select></div>
+          </div>
+          <div class="tune-grid sliders">
+            <div><label>Motor <span id="v-motor">2</span></label><input id="rg-motor" type="range" min="0" max="4" value="2"></div>
+            <div><label>Reifen/Grip <span id="v-grip">2</span></label><input id="rg-grip" type="range" min="0" max="4" value="2"></div>
+            <div><label>Nitro-Tank <span id="v-nitro">2</span></label><input id="rg-nitro" type="range" min="0" max="4" value="2"></div>
+          </div>
+          <div class="best-box">
+            <h3>🏆 BESTZEITEN (lokal)</h3>
+            <div id="best-times">Noch keine Rennen gefahren.</div>
+          </div>
+        </div>
+      </div>
+      <div class="foot">Desktop 3D &bull; WASD / Pfeile fahren &bull; SPACE Drift &bull; SHIFT Nitro &bull; Eigene Engine, keine NFS-Assets — inspiriert von U2 / Most Wanted / Carbon</div>
+    </div>
+  </div>
+
+  <!-- Hilfe -->
+  <div id="howto" class="overlay hidden">
+    <div class="panel">
+      <h2>STEUERUNG (Desktop / Tastatur)</h2>
+      <table>
+        <tr><td><kbd>W</kbd> / <kbd>↑</kbd></td><td>Gas</td><td><kbd>S</kbd> / <kbd>↓</kbd></td><td>Bremse / Rückwärts</td></tr>
+        <tr><td><kbd>A</kbd><kbd>D</kbd> / <kbd>←</kbd><kbd>→</kbd></td><td>Lenken</td><td><kbd>SPACE</kbd></td><td>Handbremse / Drift</td></tr>
+        <tr><td><kbd>SHIFT</kbd> / <kbd>N</kbd></td><td>Nitro (genau wie in Underground)</td><td><kbd>R</kbd></td><td>Zurück auf Strecke</td></tr>
+        <tr><td><kbd>C</kbd></td><td>Kamera (nah / weit / Haube)</td><td><kbd>P</kbd> / <kbd>ESC</kbd></td><td>Pause</td></tr>
+        <tr><td><kbd>M</kbd></td><td>Sound an/aus</td><td><kbd>ENTER</kbd></td><td>Bestätigen</td></tr>
+      </table>
+      <h2>TIPPS</h2>
+      <ul>
+        <li>Nitro füllt sich durch Driften und Windschatten auf.</li>
+        <li>Polizei (Heat 1–5): nicht anhalten lassen! BUSTED-Balken füllt sich, wenn Cops nah &amp; du langsam bist. Entkomme durch Abstand.</li>
+        <li>Canyon ist schmal — berühre die Leitplanke nicht zu hart, sonst verlierst du Speed.</li>
+        <li>Drift (SPACE + Lenken) gibt Style-Punkte im Canyon-Duell.</li>
+      </ul>
+      <button id="btn-howto-close">ZURÜCK</button>
+    </div>
+  </div>
+
+  <!-- Countdown -->
+  <div id="countdown" class="hidden">3</div>
+
+  <!-- HUD -->
+  <div id="hud" class="hidden">
+    <div id="hud-top-left">
+      <div id="hud-pos">P4<span>/4</span></div>
+      <div id="hud-lap">RUNDE 1/3</div>
+      <div id="hud-time">0:00.0</div>
+      <div id="hud-last">—</div>
+    </div>
+    <div id="hud-top-right">
+      <div id="hud-heat" class="hidden">HEAT <span id="heat-stars">★★☆☆☆</span></div>
+      <div id="hud-wanted" class="hidden"><div id="busted-fill"></div><span>BUSTED</span></div>
+      <div id="hud-escape" class="hidden">ENTKOMMEN: <b id="escape-t">0.0</b>s</div>
+      <canvas id="minimap" width="180" height="180"></canvas>
+    </div>
+    <div id="hud-bottom-right">
+      <div id="speedo"><span id="speed">0</span><small>km/h</small></div>
+      <div id="nitro-bar"><div id="nitro-fill"></div><span>NITRO</span></div>
+      <div id="drift-score" class="hidden">DRIFT +<span id="drift-pts">0</span></div>
+    </div>
+    <div id="hud-msg"></div>
+    <div id="hud-pause" class="hidden">
+      <div><h2>PAUSE</h2><p>Weiter mit P / ESC — Neustart mit ENTER — Menü mit Q</p></div>
+    </div>
+  </div>
+
+  <!-- Ergebnis -->
+  <div id="result" class="overlay hidden">
+    <div class="panel wide">
+      <h2 id="res-title">ZIEL!</h2>
+      <div id="res-sub"></div>
+      <table id="res-table"></table>
+      <div class="row-btns">
+        <button id="btn-restart">NEUSTART</button>
+        <button id="btn-tomenu" class="ghost">ZUR GARAGE</button>
+      </div>
+      <div class="foot">ENTER = Neustart &bull; Q = Garage</div>
+    </div>
+  </div>
+
+  <div id="vignette"></div>
+  <div id="nitro-flash"></div>
+</div>
+<script type="module" src="js/main.js"></script>
+</body>
+</html>
