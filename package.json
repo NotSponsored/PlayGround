@@ -1,0 +1,34 @@
+{
+  "name": "crimson-hunt",
+  "version": "1.0.0",
+  "description": "CRIMSON HUNT — düsteres 3D-Actionspiel im Stil von Devil May Cry (ohne Style-Meter). Three.js + Vite + Electron (Desktop).",
+  "type": "module",
+  "main": "electron/main.js",
+  "scripts": {
+    "dev": "vite --port 3002 --host",
+    "build": "vite build",
+    "preview": "vite preview --port 3002",
+    "electron": "vite build && electron .",
+    "dist": "vite build && npx --yes electron-builder --win --linux --dir"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/NotSponsored/PlayGround.git"
+  },
+  "keywords": [
+    "game",
+    "threejs",
+    "action",
+    "devil-may-cry-like",
+    "desktop"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "three": "^0.186.1"
+  },
+  "devDependencies": {
+    "electron": "^44.7.2",
+    "vite": "^8.3.4"
+  }
+}

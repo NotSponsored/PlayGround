@@ -1,0 +1,18 @@
+import { defineConfig } from 'vite';
+
+export default defineConfig({
+  base: './',
+  server: {
+    port: 3002,
+    host: true,
+  },
+  preview: {
+    port: 3002,
+    host: true,
+  },
+  build: {
+    outDir: 'dist',
+    sourcemap: false,
+    chunkSizeWarningLimit: 1200,
+  },
+});
