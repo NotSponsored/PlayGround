@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FFd20 Roguelite – Prototyp</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div id="app">
+  <header id="topbar">
+    <span id="game-title">FFd20 ROGUELITE <small>Prototyp v0.1</small></span>
+    <span id="run-info"></span>
+  </header>
+  <main id="screens">
+    <section id="screen-menu" class="screen active">
+      <h1>FINAL FANTASY d20 — ROGUELITE</h1>
+      <p class="subtitle">Browser-Prototyp · Rundenkampf nach FFd20 / Pathfinder 1e</p>
+      <div class="menu-buttons">
+        <button id="btn-new-run">Neuer Run</button>
+        <button id="btn-continue">Run fortsetzen</button>
+        <button id="btn-unlocks">Freischaltungen</button>
+        <button id="btn-help">Regelquellen</button>
+      </div>
+      <div id="menu-panel"></div>
+    </section>
+    <section id="screen-class" class="screen">
+      <h2>Hauptklasse wählen</h2>
+      <div id="class-cards" class="cards"></div>
+      <button id="btn-start-run" disabled>Run starten</button>
+      <button class="back" data-go="screen-menu">Zurück</button>
+    </section>
+    <section id="screen-game" class="screen">
+      <div id="game-layout">
+        <div id="world-wrap">
+          <canvas id="world" width="640" height="480" tabindex="0"></canvas>
+          <div id="world-hint">WASD / Pfeile: bewegen · E / Klick: interagieren · I: Inventar</div>
+        </div>
+        <aside id="side">
+          <div id="char-panel" class="panel"></div>
+          <div id="log" class="panel"></div>
+        </aside>
+      </div>
+    </section>
+    <section id="screen-combat" class="screen">
+      <div id="combat-layout">
+        <div class="panel"><h3>Kampfrunde <span id="combat-round"></span></h3><div id="initiative-list"></div></div>
+        <div class="panel"><div id="enemy-panel"></div><div id="combat-actions"></div></div>
+        <div class="panel"><div id="player-panel"></div><div id="combat-log" class="scroll"></div></div>
+      </div>
+    </section>
+    <section id="screen-reward" class="screen">
+      <h2 id="reward-title">Boss besiegt!</h2>
+      <div id="reward-panel"></div>
+    </section>
+    <section id="screen-dead" class="screen">
+      <h2>Du bist gefallen …</h2>
+      <div id="dead-panel"></div>
+      <button data-go="screen-menu">Hauptmenü</button>
+    </section>
+  </main>
+  <div id="modal" class="hidden"><div id="modal-box"></div></div>
+</div>
+<script src="js/dice.js"></script>
+<script src="js/rules.js"></script>
+<script src="js/data.js"></script>
+<script src="js/character.js"></script>
+<script src="js/save.js"></script>
+<script src="js/combat.js"></script>
+<script src="js/world.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
