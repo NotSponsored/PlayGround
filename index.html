@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NEON ARENA — RPG Shooter</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎯</text></svg>" />
+  <link rel="stylesheet" href="/src/style.css" />
+</head>
+<body>
+  <canvas id="game"></canvas>
+
+  <!-- HUD -->
+  <div id="hud" class="hidden">
+    <div id="crosshair"><div class="dot"></div></div>
+    <div id="hitmarker"></div>
+    <div id="topbar">
+      <div class="pill" id="wave-pill">WELLE <b id="hud-wave">1</b></div>
+      <div class="pill">GEGNER <b id="hud-enemies">0</b></div>
+      <div class="pill">SCORE <b id="hud-score">0</b></div>
+      <div class="pill dim">REKORD <b id="hud-best">0</b></div>
+    </div>
+    <div id="bottombar">
+      <div id="vitals">
+        <div id="hp-wrap"><div id="hp-fill"></div><span id="hp-text">100</span></div>
+        <div id="xp-wrap"><div id="xp-fill"></div><span id="xp-text">LV 1</span></div>
+        <div id="abilities"></div>
+        <div id="buffs"></div>
+      </div>
+      <div id="stats-mini"></div>
+    </div>
+    <div id="wave-banner" class="hidden"><h2 id="wave-title">WELLE 1</h2><p id="wave-sub"></p></div>
+    <div id="dmg-vignette"></div>
+    <div id="floaters"></div>
+    <div id="killfeed"></div>
+  </div>
+
+  <!-- Hauptmenü / Klassenauswahl -->
+  <div id="menu" class="overlay">
+    <div class="menu-inner">
+      <h1 class="logo">NEON<span>ARENA</span></h1>
+      <p class="tagline">ARENA-SHOOTER × ACTION-RPG &nbsp;•&nbsp; Desktop • WASD + Maus</p>
+      <h3>WÄHLE DEINE KLASSE</h3>
+      <div class="classes">
+        <button class="class-card" data-class="pulsar">
+          <div class="cc-icon">⚡</div>
+          <div class="cc-name">PULSAR</div>
+          <div class="cc-desc">Chrono-Stürmerin. Schnell, frech, überall.</div>
+          <div class="ref">Hommage an Tracer (Overwatch)</div>
+          <ul class="ab-list">
+            <li>🔫 <b>LMB</b> Pulsar-Pistolen</li>
+            <li>💠 <b>RMB</b> Scherbenfächer</li>
+            <li>⏳ <b>Q</b> Zeitblase (Slow)</li>
+            <li>✨ <b>Shift</b> Blink</li>
+            <li>💣 <b>E</b> Pulsbombe (Ult)</li>
+          </ul>
+          <ul><li>❤ 90 HP</li><li>👟 Tempo 10.5 • 🎯 15% Crit</li></ul>
+        </button>
+        <button class="class-card" data-class="aegis">
+          <div class="cc-icon">🛡️</div>
+          <div class="cc-name">AEGIS</div>
+          <div class="cc-desc">Schildwache. Hält die Linie, bricht sie auch.</div>
+          <div class="ref">Hommage an Reinhardt (Overwatch) / Fernando (Paladins)</div>
+          <ul class="ab-list">
+            <li>🔨 <b>LMB</b> Schlaghammer (Fläche)</li>
+            <li>🔥 <b>RMB</b> Feuerstoß (pierct)</li>
+            <li>🛡️ <b>Q</b> Barriere (Schildwand)</li>
+            <li>🐗 <b>Shift</b> Sturmangriff</li>
+            <li>🌋 <b>E</b> Erdbeben (Stun, Ult)</li>
+          </ul>
+          <ul><li>❤ 220 HP</li><li>👟 Tempo 6.8 • 🛡 30% Rüstung</li></ul>
+        </button>
+        <button class="class-card" data-class="meteor">
+          <div class="cc-icon">🔮</div>
+          <div class="cc-name">METEOR</div>
+          <div class="cc-desc">Schwarzmagier. Langsam. Löscht alles aus.</div>
+          <div class="ref">Hommage an Black Mage (Final Fantasy)</div>
+          <ul class="ab-list">
+            <li>🔥 <b>LMB</b> Feuer (pierct ×2)</li>
+            <li>⚡ <b>RMB</b> Donner (Kettenblitz)</li>
+            <li>🔷 <b>Q</b> Ley-Linien (+40% DMG-Zone)</li>
+            <li>🌀 <b>Shift</b> Äther-Schritt</li>
+            <li>☄️ <b>E</b> Meteor (Ult)</li>
+          </ul>
+          <ul><li>❤ 100 HP</li><li>👟 Tempo 7.2 • 🏹 Pierce 2</li></ul>
+        </button>
+        <button class="class-card" data-class="ronin">
+          <div class="cc-icon">🗡️</div>
+          <div class="cc-name">RONIN</div>
+          <div class="cc-desc">Cyber-Samurai. Schnell, präzise, tödlich nah.</div>
+          <div class="ref">Hommage an Genji (Overwatch)</div>
+          <ul class="ab-list">
+            <li>🗡️ <b>LMB</b> Katana</li>
+            <li>🎯 <b>RMB</b> Shuriken</li>
+            <li>🌀 <b>Q</b> Klingenwirbel (360°)</li>
+            <li>⚡ <b>Shift</b> Blitzschnitt</li>
+            <li>🐉 <b>E</b> Drachenklinge (Ult)</li>
+          </ul>
+          <ul><li>❤ 110 HP</li><li>👟 Tempo 9.5 • 🎯 15% Crit</li></ul>
+        </button>
+        <button class="class-card" data-class="doc">
+          <div class="cc-icon">➕</div>
+          <div class="cc-name">DOC</div>
+          <div class="cc-desc">Frontsanitäter. Heilt, räumt auf, trifft immer.</div>
+          <div class="ref">Hommage an Soldier 76 (Overwatch) / Lifeline (Apex)</div>
+          <ul class="ab-list">
+            <li>🔫 <b>LMB</b> Pulsgewehr</li>
+            <li>🚀 <b>RMB</b> Helix-Raketen (AoE)</li>
+            <li>💚 <b>Q</b> Heilfeld</li>
+            <li>🤸 <b>Shift</b> Hechtsprung</li>
+            <li>🎯 <b>E</b> Visier (Ult: nur Crits)</li>
+          </ul>
+          <ul><li>❤ 130 HP</li><li>👟 Tempo 8.2 • 🛡 10% Rüstung</li></ul>
+        </button>
+        <button class="class-card" data-class="dragoon">
+          <div class="cc-icon">🐲</div>
+          <div class="cc-name">DRAGOON</div>
+          <div class="cc-desc">Himmelslanze. Kommt von oben. Immer.</div>
+          <div class="ref">Hommage an Dragoon (Final Fantasy)</div>
+          <ul class="ab-list">
+            <li>🔱 <b>LMB</b> Lanzenstoß (Reichweite)</li>
+            <li>🦅 <b>RMB</b> Speerwurf (pierct)</li>
+            <li>💨 <b>Q</b> Ausweichsprung (rückwärts)</li>
+            <li>🦘 <b>Shift</b> Hochsprung (Slam)</li>
+            <li>🐲 <b>E</b> Drachensturz (Ult)</li>
+          </ul>
+          <ul><li>❤ 150 HP</li><li>👟 Tempo 8.6 • 🏹 Pierce 1</li></ul>
+        </button>
+      </div>
+      <div class="controls-hint">
+        <span><b>WASD</b> Laufen</span><span><b>LMB</b> Primär</span><span><b>RMB</b> Sekundär</span>
+        <span><b>Q</b> Tertiär</span><span><b>Shift</b> Move</span><span><b>E</b> Ult</span>
+        <span><b>Space</b> Springen</span><span><b>Strg</b> Sprint an/aus</span><span><b>ESC</b> Pause</span>
+      </div>
+      <p class="hint">XP sammeln → Level aufsteigen → 1 von 3 Upgrades wählen. Alle 5 Wellen wartet ein Boss.</p>
+    </div>
+  </div>
+
+  <!-- Level-Up -->
+  <div id="levelup" class="overlay hidden">
+    <div class="lu-inner">
+      <h2>⬆ LEVEL <span id="lu-level">2</span>!</h2>
+      <p>Wähle ein Upgrade (1 / 2 / 3)</p>
+      <div id="lu-cards"></div>
+    </div>
+  </div>
+
+  <!-- Pause -->
+  <div id="pause" class="overlay hidden">
+    <div class="panel">
+      <h2>⏸ PAUSE</h2>
+      <div id="pause-stats"></div>
+      <button id="btn-resume" class="btn">WEITER (Klick)</button>
+      <button id="btn-restart2" class="btn ghost">NEUSTART (gleiche Klasse)</button>
+      <h3 class="pick-h">— ODER NEUE KLASSE (ESC) —</h3>
+      <div id="pause-classes" class="pick-row"></div>
+    </div>
+  </div>
+
+  <!-- Game Over -->
+  <div id="gameover" class="overlay hidden">
+    <div class="panel">
+      <h2>💀 GAME OVER</h2>
+      <div id="go-stats"></div>
+      <button id="btn-restart" class="btn">NOCHMAL (Enter, gleiche Klasse)</button>
+      <button id="btn-tomenu" class="btn ghost">ZUM MENÜ</button>
+      <h3 class="pick-h">— ODER DIREKT NEUE KLASSE —</h3>
+      <div id="go-classes" class="pick-row"></div>
+    </div>
+  </div>
+
+  <div id="toast" class="hidden"></div>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>
