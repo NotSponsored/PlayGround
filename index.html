@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DEVIL WALKER: Stylish Peace Operation — DMC5 × Peace Walker Mix</title>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="style.css">
+<script type="importmap">
+{ "imports": { "three": "https://unpkg.com/three@0.160.0/build/three.module.js" } }
+</script>
+</head>
+<body>
+<canvas id="game"></canvas>
+
+<!-- HUD -->
+<div id="hud" class="hidden">
+  <div id="topleft">
+    <div id="hpbar"><div id="hpfill"></div><span id="hptext">100</span></div>
+    <div id="dtbar"><div id="dtfill"></div><span id="dttext">DEVIL TRIGGER [T]</span></div>
+    <div id="stance-row">
+      <span id="camo">TARININDEX 20%</span>
+      <span id="stance">STEHEND</span>
+      <span id="weapon">KATANA · lethal [1/2]</span>
+    </div>
+    <div id="objective"><span id="obj-icon">◆</span> <span id="obj-text">Hacke die Terminals</span></div>
+  </div>
+  <div id="topright">
+    <canvas id="minimap" width="170" height="170"></canvas>
+    <div id="phase">INFILTRATION</div>
+    <div id="base-mini">MB: <span id="staff">0</span> ☁ <span id="gmp">0</span> GMP · Fulton <span id="fulton">3</span></div>
+  </div>
+  <div id="stylebox"><div id="rank">D</div><div id="rankword">Dismal</div><div id="combo">0 HITS</div><div id="stylebar"><div id="stylefill"></div></div></div>
+  <div id="crosshair">+</div>
+  <div id="prompt"></div>
+  <div id="hitmarker"></div>
+  <div id="bossbar-wrap" class="hidden"><div id="bossname">☠ PEACE SENTINEL — Autonome Friedenswaffe</div><div id="bossbar"><div id="bossfill"></div></div></div>
+  <div id="dmgnums"></div>
+  <div id="mission-toast"></div>
+</div>
+
+<!-- Menü -->
+<div id="menu">
+  <div class="menu-inner">
+    <div class="kicker">DMC5 × MGS PEACE WALKER · 3D DESKTOP</div>
+    <h1>DEVIL WALKER<br><span>STYLISH PEACE OPERATION</span></h1>
+    <p class="story">Costa Rica, 1974. Eine dämonische KI-Armee tarnt sich als „Friedenswaffe“ (Peace Sentinel).
+    Du bist <b>VENOM DANTE</b> — Dämonenjäger + Infiltrator. Schleich dich ein wie Snake, kämpfe mit Style wie Dante,
+    fultone Soldaten für deine <b>Mother Base</b> und zerlege den Metal Gear mit SSS-Rank.</p>
+    <div class="cols">
+      <div>
+        <h3>⚔ DMC-Seite</h3>
+        <ul>
+          <li><b>LMB</b> Schwert-Kombo (5 Hits) · <b>E</b> Launcher (in die Luft!)</li>
+          <li><b>RMB / halten</b> Pistolen (Ebony & Ivory)</li>
+          <li><b>Shift</b> Dash mit i-Frames · <b>Space</b> Sprung / Doppelsprung</li>
+          <li><b>T</b> Devil Trigger (wenn Leiste voll)</li>
+          <li>Style-Rank: D→C→B→A→S→SS→<b>SSS</b></li>
+        </ul>
+      </div>
+      <div>
+        <h3>🐍 Peace-Walker-Seite</h3>
+        <ul>
+          <li><b>WASD</b> bewegen · <b>C</b> ducken · <b>B</b> Pappkarton</li>
+          <li><b>1/2</b> lethal / Betäubung · <b>F</b> Fulton (Betäubte!)</li>
+          <li><b>E</b> Terminal hacken / interagieren</li>
+          <li><b>TAB</b> Mother Base (Rekruten, Upgrades)</li>
+          <li>Sichtkegel meiden · Tarnindex beachten</li>
+        </ul>
+      </div>
+    </div>
+    <div class="missionset">
+      <div>◆ OP 1: 3 Terminals hacken</div><div>◆ OP 2: 4 Soldaten fultonen</div><div>◆ OP 3: PEACE SENTINEL zerstören</div>
+    </div>
+    <button id="startBtn">▶ MISSION STARTEN</button>
+    <div class="hint">Klick = Pointer-Lock (Maus = Kamera). <b>P</b> Pause · <b>M</b> Ton an/aus · <b>TAB</b> Mother Base</div>
+    <div id="loadstatus">Lade Three.js …</div>
+  </div>
+</div>
+
+<!-- Mother Base -->
+<div id="base" class="hidden">
+  <div class="base-inner">
+    <h2>◇ MOTHER BASE <span id="base-gmp"></span></h2>
+    <p id="base-desc">Rekrutiere per Fulton Soldaten. Sie arbeiten automatisch in Outer Ops und verdienen GMP.</p>
+    <div class="base-grid">
+      <div class="base-card"><h3>Personal</h3><div id="base-staff"></div><div id="ops-log"></div></div>
+      <div class="base-card"><h3>Upgrades (GMP)</h3><div id="shop"></div></div>
+    </div>
+    <button id="closeBase">[TAB] Zurück in den Einsatz</button>
+  </div>
+</div>
+
+<div id="pause" class="hidden"><div><h2>PAUSE [P]</h2><p>Klick zum Fortsetzen</p></div></div>
+<div id="end" class="hidden"><div class="menu-inner"><h1 id="end-title">S-RANG</h1><p id="end-stats"></p><button id="restartBtn">↻ NEUSTART</button></div></div>
+<div id="vignette"></div><div id="dmgflash"></div>
+
+<script type="module" src="main.js"></script>
+</body>
+</html>
